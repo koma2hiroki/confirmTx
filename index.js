@@ -4,12 +4,9 @@ const url = require('url');
 
 var app = electron.app;
 var BrowserWindow = electron.BrowserWindow;
+var Menu = electron.Menu;
 
 // Electron part =======================================
-
-if (process.env.NODE_ENV !== 'production') {
-  // require('electron-reload')(__dirname);
-}
 
 let win;
 function createWindow() {
@@ -22,8 +19,10 @@ function createWindow() {
   win.on('closed', () => {
     win = null
   });
+  require('./module/mac')(app, Menu);
   // win.webContents.openDevTools();
 }
+
 app.on('ready', createWindow);
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
