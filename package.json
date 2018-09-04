@@ -1,0 +1,23 @@
+{
+  "name": "confirmTx",
+  "description": "Check Ethereum's transaction hash by Electron",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "./node_modules/.bin/electron ."
+  },
+  "author": "koma2hiroki",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/koma2hiroki/confirmTx"
+  },
+  "dependencies": {
+    "bn.js": "^4.11.8",
+    "electron": "^2.0.8",
+    "electron-reload": "^1.2.5",
+    "jquery": "^3.3.1",
+    "rlp": "^2.1.0",
+    "web3-utils": "^1.0.0-beta.36"
+  }
+
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ConfirmTx</title>
+  <style type="text/css">
+  body {
+    font-family: helvetica, arial, 'hiragino kaku gothic pro', meiryo, 'ms pgothic', sans-serif;
+    text-align: center;
+    background-color: rgb(231, 231, 231);
+  }
+  * {
+    box-sizing: border-box;
+  }
+  h1 {
+    font-size: 28px;
+    text-align: center;
+  }
+  h2 {
+    font-size: 16px;
+    font-weight: normal;
+    border-bottom: 1px dashed rgb(142, 142, 142);
+    padding-bottom: 5px;
+  }
+  .flex {
+    display: flex;
+  }
+  .flex > div {
+    width: 100%;
+    margin: 0 10px;
+  }
+  .main-contents {
+    margin: 0 auto;
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  textarea {
+    resize: none;
+    width: 100%;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: rgb(41, 41, 41);
+    background-color: rgb(247, 247, 247);
+    border: 1px solid rgb(231, 231, 231);
+    border: none;
+    padding: 10px;
+  }
+  textarea:read-only {
+    background-color: rgb(231, 231, 231);
+  }
+  input[type="button"] {
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    float: right;
+  }
+  .bg {
+    background-color: rgb(247, 220, 220);
+  }
+  .clear {
+    clear:both;
+  }
+
+  </style>
+</head>
+<body>
+  <div class="main-contents">
+    <h1>Confirm Transction</h1>
+    <h2>1. check "Signed Transaction"</h2>
+    <div class="flex">
+      <div>
+        <textarea id="stxbox" rows="10" ></textarea>
+      </div>
+      <div>
+        <textarea id="stxbox-out" rows="10" readonly></textarea>
+      </div>
+    </div>
+    <input type="button" value="Show Transaction" onclick="showTx()"></input>
+    <div class="clear"></div>
+
+    <h2>2. check "Raw Transaction"</h2>
+    <div class="flex">
+      <div>
+        <textarea id="rtxbox" rows="10" ></textarea>
+      </div>
+      <div>
+        Result : <span id="rtxbox-out"></span>
+      </div>
+    </div>
+    <input type="button" value="Check Transaction" onclick="checkTx()"></input>
+  </div>
+
+  <script>window.$ = window.jQuery = require('jquery');</script>
+  <script type="text/javascript">
+      var ipc = require('electron').ipcRenderer;
+      function showTx() {
+        if (!$('#stxbox').val()) {
+          return $('#stxbox').addClass('bg');
+        }
+        $('#stxbox').removeClass('bg');
+        console.log("showTx");
+        ipc.on('stx-reply', function(event, response) {
+            console.log("response : ", response);
+            $('#stxbox-out').val(JSON.stringify(response, null, "\t"));
+        });
+        ipc.send('stx', $('#stxbox').val());
+      }
+
+      function checkTx() {
+        if (!$('#stxbox').val()) {
+          return $('#stxbox').addClass('bg');
+        }
+        if (!$('#rtxbox').val()) {
+          return $('#stxbox').addClass('bg');
+        }
+        $('#stxbox').removeClass('bg');
+        $('#rtxbox').removeClass('bg');
+        ipc.on('rtx-reply', function(event, response) {
+            console.log("response : ", response);
+            $('#rtxbox-out').html(response);
+        });
+        ipc.send('rtx', {
+          stx: $('#stxbox').val(),
+          rtx: $('#rtxbox').val(),
+        });
+      }
+  </script>
+</body>
+</html>
