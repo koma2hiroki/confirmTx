@@ -11,6 +11,9 @@ function toHex(_) {
 }
 
 function equal(actual, expected, target) {
+  if (!expected[target]) {
+    return;
+  }
   let et = expected[target];
   if (et.indexOf('0x0') === 0) {
     et = '0x' + et.slice(3);
