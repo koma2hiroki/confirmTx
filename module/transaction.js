@@ -1,28 +1,12 @@
-const utils = require('web3-utils');
-const Bn = require('bn.js');
-const RLP = require('rlp');
 const assert = require('assert');
-
-function toHex(_) {
-  if (_.indexOf('0x') === 0) {
-    _ = _.slice(2);
-  }
-  return '0x' + (new Bn(_)).toString(16);
-}
+const ethers = require('ethers');
+const Wallet = ethers.Wallet;
 
 function equal(actual, expected, target) {
   if (!expected[target]) {
     return;
   }
-  let et = expected[target];
-  if (et.indexOf('0x0') === 0) {
-    et = '0x' + et.slice(3);
-  }
-  if (et === '0x') {
-    et = '0x0';
-  }
-  // console.log(actual[target], et, et.length);
-  assert.equal(actual[target], et, `not equal (${target})<br><br>
+  assert.equal(actual[target], expected[target], `not equal (${target})<br><br>
     - signed tx<br>
     ${expected[target]}<br>
     - raw tx<br>
@@ -31,32 +15,15 @@ function equal(actual, expected, target) {
 }
 
 module.exports = {
-  decodeTx: function(rawtx) {
+  decodeTx: function(hashtx) {
     try {
-      const decodedTx = RLP.decode(rawtx);
-
-      const [raw_nonce,
-        raw_gasPrice,
-        raw_gasLimit,
-        raw_to,
-        raw_value,
-        raw_data,
-        raw_v,
-        raw_r,
-        raw_s] = decodedTx;
-
-      return {
-        nonce: toHex(raw_nonce),
-        gasPrice: toHex(raw_gasPrice),
-        gasLimit: toHex(raw_gasLimit),
-        to: utils.toChecksumAddress(raw_to.toString('hex')),
-        value: toHex(raw_value),
-        data: toHex(raw_data),
-        v: toHex(raw_v),
-        r: toHex(raw_r),
-        s: toHex(raw_s)
-      }
+      const tx = Wallet.parseTransaction(hashtx);
+      tx.gasPrice = tx.gasPrice.toHexString();
+      tx.gasLimit = tx.gasLimit.toHexString();
+      tx.value = tx.value.toHexString();
+      return tx;
     } catch (e) {
+      console.log(e);
       return "decoded error";
     }
   },
@@ -75,6 +42,7 @@ module.exports = {
       return "Raw Tranaction parse error";
     }
     try {
+      equal(actual, expected, "chainId");
       equal(actual, expected, "nonce");
       equal(actual, expected, "gasPrice");
       equal(actual, expected, "gasLimit");

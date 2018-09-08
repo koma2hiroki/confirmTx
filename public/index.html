@@ -55,6 +55,10 @@
     font-size: 16px;
     float: right;
   }
+  .from {
+    padding-left: 10px;
+    padding-top: 10px;
+  }
   .bg {
     background-color: rgb(247, 220, 220);
   }
@@ -70,13 +74,14 @@
     <h2>1. check "Signed Transaction"</h2>
     <div class="flex">
       <div>
-        <textarea id="stxbox" rows="10" ></textarea>
+        <textarea id="stxbox" rows="10"></textarea>
       </div>
       <div>
         <textarea id="stxbox-out" rows="10" readonly></textarea>
       </div>
     </div>
     <input type="button" value="Show Transaction" onclick="showTx()"></input>
+    <div id="from" class="from"></div>
     <div class="clear"></div>
 
     <h2>2. check "Raw Transaction"</h2>
@@ -101,6 +106,10 @@
         $('#stxbox').removeClass('bg');
         console.log("showTx");
         ipc.on('stx-reply', function(event, response) {
+            if (response.from) {
+              $('#from').html(`From : ${response.from}`);
+              delete response.from;
+            }
             console.log("response : ", response);
             $('#stxbox-out').val(JSON.stringify(response, null, "\t"));
         });
