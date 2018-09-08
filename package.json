@@ -1,7 +1,7 @@
 {
   "name": "confirmTx",
   "description": "Check Ethereum's transaction hash by Electron",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "start": "./node_modules/.bin/electron .",
     "pack": "./node_modules/.bin/electron-packager . confirmTx --platform=darwin --arch=x64 --electronVersion=2.0.8"
